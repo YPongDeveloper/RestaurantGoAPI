@@ -9,4 +9,5 @@ import (
 func CustomerRouter(e *echo.Echo) {
 	// เรียกใช้งานฟังก์ชัน service
 	e.GET("/customers", service.GetCustomers)
+	e.GET("/customer/:customerId", service.GetCustomerById)
 }

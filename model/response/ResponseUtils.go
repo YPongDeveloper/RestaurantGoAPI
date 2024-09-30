@@ -14,6 +14,13 @@ func SuccessResponse(data interface{}) ResponseUtils {
 		Data:        data,
 	}
 }
+func SuccessNoResponse() ResponseUtils {
+	return ResponseUtils{
+		Code:        200,
+		Description: "Success",
+		Data:        "{}",
+	}
+}
 
 // ฟังก์ชันสร้าง Response เมื่อเกิดข้อผิดพลาด
 func ErrorResponse(description string) ResponseUtils {

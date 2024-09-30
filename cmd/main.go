@@ -12,5 +12,6 @@ func main() {
 	router.CustomerRouter(e)
 	router.FoodRouter(e)
 	router.OrderRouter(e)
+	router.EmployeeRouter(e)
 	e.Logger.Fatal(e.Start(":8080"))
 }

@@ -55,3 +55,7 @@ func ChackBillOrder(c echo.Context) error {
 	// ส่ง response สำเร็จกลับไป
 	return c.JSON(http.StatusOK, response.SuccessResponse("Order checked bill successfully"))
 }
+
+func GetOrders(c echo.Context) error {
+	return nil
+}
