@@ -1,4 +1,3 @@
-// service/customerController.go
 package service
 
 import (
@@ -22,8 +21,8 @@ func GetCustomerById(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusBadRequest, response.ErrorResponse("Invalid Customer Id"))
 	}
-	var customerResult []response.CustomerIdResponse
-	customerResult = repository.GetCustomerByIdData(customerId)
+
+	customerResult := repository.GetCustomerByIdData(customerId)
 	if customerResult == nil {
 		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All customer data"))
 	}
@@ -36,6 +35,7 @@ func GetCustomerById(c echo.Context) error {
 	for _, customer := range customerResult {
 		var customerOrderResponse response.CustomerOrderResponse
 		customerOrderResponse.CustomerId = customer.CustomerId
+		customerOrderResponse.EmployeeId = customer.EmployeeId
 		customerOrderResponse.Number = customer.Number
 		customerOrderResponse.OrderId = customer.OrderId
 		customerOrderResponse.TotalAmount = customer.TotalAmount
@@ -43,7 +43,7 @@ func GetCustomerById(c echo.Context) error {
 		customerOrderResponse.Status = customer.Status
 		customerOrderResponse.Review = customer.Review
 		for _, orderList := range orderListResult {
-			if orderList.OrderId == customer.OrderId { // ตรวจสอบให้ order_id ตรงกัน
+			if orderList.OrderId == customer.OrderId {
 				customerOrderResponse.OrderList = append(customerOrderResponse.OrderList, orderList)
 			}
 		}

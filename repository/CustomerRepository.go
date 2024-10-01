@@ -22,8 +22,7 @@ func GetCustomerByIdData(customerId int) []response.CustomerIdResponse {
 	var customerIds []response.CustomerIdResponse
 	db := database.DB
 
-	// Query ข้อมูลจากฐานข้อมูล
-	result := db.Raw("SELECT c.customer_id, c.number, o.order_id, o.table_id, o.total_amount, o.order_date, o.status, o.review "+
+	result := db.Raw("SELECT c.customer_id,o.employee_id, c.number, o.order_id, o.table_id, o.total_amount, o.order_date, o.status, o.review "+
 		"FROM customer c INNER JOIN Orders o ON c.customer_id = o.customer_id WHERE c.customer_id = ?", customerId).
 		Scan(&customerIds)
 
@@ -32,7 +31,6 @@ func GetCustomerByIdData(customerId int) []response.CustomerIdResponse {
 		return nil
 	}
 
-	// ส่งคืนค่า customerIds
 	return customerIds
 
 }

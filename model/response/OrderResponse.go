@@ -2,10 +2,19 @@ package response
 
 import "time"
 
-type CustomerOrderResponse struct {
+type OrderIdResponse struct {
+	OrderId     int       `json:"order_id"`
+	CustomerId  int       `json:"customer_id"`
+	EmployeeId  int       `json:"employee_id"`
+	TableId     int       `json:"table_id"`
+	TotalAmount int       `json:"total_amount"`
+	OrderDate   time.Time `json:"order_date"`
+	Status      int       `json:"status"`
+	Review      string    `json:"review"`
+}
+type OrderResponse struct {
 	CustomerId  int                 `json:"customer_id"`
 	EmployeeId  int                 `json:"employee_id"`
-	Number      int                 `json:"number"`
 	OrderId     int                 `json:"order_id"`
 	TableId     int                 `json:"table_id"`
 	TotalAmount int                 `json:"total_amount"`
@@ -14,21 +23,14 @@ type CustomerOrderResponse struct {
 	Review      string              `json:"review"`
 	OrderList   []OrderListResponse `json:"order_list"` // รายการอาหาร
 }
-type CustomerIdResponse struct {
+type OrderAllResponse struct {
+	OrderId     int       `json:"order_id"`
 	CustomerId  int       `json:"customer_id"`
 	EmployeeId  int       `json:"employee_id"`
-	Number      int       `json:"number"`
-	OrderId     int       `json:"order_id"`
 	TableId     int       `json:"table_id"`
+	TotalMenu   int       `json:"total_menu"`
 	TotalAmount int       `json:"total_amount"`
 	OrderDate   time.Time `json:"order_date"`
 	Status      int       `json:"status"`
 	Review      string    `json:"review"`
-}
-type OrderListResponse struct {
-	OrderId      int    `json:"order_id"`
-	FoodName     string `json:"food_name"`
-	CategoryName string `json:"category_name"`
-	Quantity     int    `json:"quantity"`
-	TotalPrice   int    `json:"total_price"`
 }

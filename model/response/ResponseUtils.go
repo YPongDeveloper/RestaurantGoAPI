@@ -6,7 +6,6 @@ type ResponseUtils struct {
 	Data        interface{} `json:"data"`
 }
 
-// ฟังก์ชันสร้าง Response สำเร็จ
 func SuccessResponse(data interface{}) ResponseUtils {
 	return ResponseUtils{
 		Code:        200,
@@ -22,7 +21,6 @@ func SuccessNoResponse() ResponseUtils {
 	}
 }
 
-// ฟังก์ชันสร้าง Response เมื่อเกิดข้อผิดพลาด
 func ErrorResponse(description string) ResponseUtils {
 	return ResponseUtils{
 		Code:        500,
