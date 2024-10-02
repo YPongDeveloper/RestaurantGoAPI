@@ -11,7 +11,7 @@ import (
 func GetEmployees(c echo.Context) error {
 	result := repository.GetEmployees()
 	if result == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Employees data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Employees all data"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(result))
 }
@@ -47,14 +47,31 @@ func UpdateEmployee(c echo.Context) error {
 
 func FireEmployee(c echo.Context) error {
 	employeeId := c.Param("employeeId")
-	var employeeUpdate dao.Employee
-	if err := c.Bind(&employeeUpdate); err != nil {
-		return c.JSON(http.StatusBadRequest, response.ErrorResponse("Invalid request body"))
-	}
+
 	result := repository.FireEmployeeData(employeeId)
 	if result != nil {
 		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Employee data"))
 	}
-	return c.JSON(http.StatusOK, response.SuccessResponse(result))
+	return c.JSON(http.StatusOK, response.SuccessResponse("Fire Employee Success!"))
 
+}
+
+func AbsentEmployee(c echo.Context) error {
+	employeeId := c.Param("employeeId")
+
+	result := repository.AdsentEmployeeData(employeeId)
+	if result != nil {
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Employee data"))
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponse("Adsent Employee Success!"))
+}
+
+func WorkEmployee(c echo.Context) error {
+	employeeId := c.Param("employeeId")
+
+	result := repository.WorkEmployeeData(employeeId)
+	if result != nil {
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Employee data"))
+	}
+	return c.JSON(http.StatusOK, response.SuccessResponse("Enter Work Employee Success!"))
 }

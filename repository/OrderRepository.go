@@ -1,6 +1,7 @@
 package repository
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"log"
 	"restaurant/database"
@@ -15,7 +16,45 @@ func UpdateStatusOrderData(orderId int, status int, review string) error {
 		log.Println("Error updating order status:", result.Error)
 		return result.Error
 	}
+	if status == 4 || status == 3 {
+		var tableId int
+		result := db.Raw("SELECT table_id FROM Orders WHERE order_id = ?", orderId).Scan(&tableId)
+		if result.Error != nil {
+			log.Println("Error retrieving table_id:", result.Error)
+			return result.Error
+		}
+		if tableId == 0 {
+			log.Println("No table_id found for the given order_id")
+			return errors.New("no table_id found for the given order_id")
+		}
+		updateResult := db.Exec("UPDATE Tables SET status = 0 WHERE table_id = ?", tableId)
+		if updateResult.Error != nil {
+			log.Println("Error updating table status:", updateResult.Error)
+			return updateResult.Error
+		}
+		updateEmployeeQuery := "UPDATE employee SET status = 0 WHERE employee_id = ?"
+		var employeeId int
+		resultEMID := db.Raw("SELECT employee_id FROM Orders WHERE order_id = ?;", orderId).Scan(&employeeId)
+		if resultEMID.Error != nil {
+			log.Println("Error retrieving employee_id:", resultEMID.Error)
+			return resultEMID.Error
+		}
+		if employeeId == 0 {
+			log.Println("No employee_id found for the given order_id")
+			return errors.New("no employee_id found for the given order_id")
+		}
+		resultEP := database.DB.Exec(updateEmployeeQuery, employeeId)
 
+		if resultEP.Error != nil {
+			log.Println("Failed to update employee status:", resultEP.Error)
+			return resultEP.Error
+		}
+
+		if resultEP.RowsAffected != 0 {
+			log.Println("No table found with the specified employee_id")
+			return errors.New("no table found with the specified employee_id")
+		}
+	}
 	if result.RowsAffected == 0 {
 		return gorm.ErrRecordNotFound
 	}
@@ -163,15 +202,6 @@ func FindAvailableTable(chairNumber int) (int, error) {
 		return 0, result.Error
 	}
 
-	if tableId > 0 {
-		updateQuery := "UPDATE Tables SET status = 1 WHERE table_id = ?"
-		updateResult := database.DB.Exec(updateQuery, tableId)
-		if updateResult.Error != nil {
-			log.Println("Failed to update table status:", updateResult.Error)
-			return 0, updateResult.Error
-		}
-	}
-
 	return tableId, nil
 }
 
@@ -225,6 +255,40 @@ func CreateOrderListItem(foodId, quantity, orderId int) error {
 	if result.Error != nil {
 		log.Println("Failed to create order list item:", result.Error)
 		return result.Error
+	}
+	return nil
+}
+
+func UpdateStatusCreateOrder(tableId int, employeeId int) error {
+	if tableId != 0 && employeeId != 0 {
+		updateTableQuery := "UPDATE Tables SET status = 1 WHERE table_id = ?"
+
+		result := database.DB.Exec(updateTableQuery, tableId)
+
+		if result.Error != nil {
+			log.Println("Failed to update table status:", result.Error)
+			return result.Error
+		}
+
+		if result.RowsAffected == 0 {
+			log.Println("No table found with the specified table_id")
+			return errors.New("no table found with the specified table_id")
+		}
+		updateEmployeeQuery := "UPDATE employee SET status = 2 WHERE employee_id = ?"
+
+		resultEP := database.DB.Exec(updateEmployeeQuery, employeeId)
+
+		if resultEP.Error != nil {
+			log.Println("Failed to update table status:", resultEP.Error)
+			return resultEP.Error
+		}
+
+		if resultEP.RowsAffected == 0 {
+			log.Println("No table found with the specified table_id")
+			return errors.New("no table found with the specified table_id")
+		}
+	} else {
+		log.Println("%d %d", tableId, employeeId)
 	}
 	return nil
 }

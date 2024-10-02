@@ -25,7 +25,7 @@ func GetMenuById(c echo.Context) error {
 	}
 	result := repository.GetMenuIdData(foodId)
 	if result == (response.FoodMenuIdResponse{}) {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All Menu data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Menu id data"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(result))
 }
@@ -37,7 +37,7 @@ func GetMenuByCategory(c echo.Context) error {
 	}
 	result := repository.GetMenuCategoryData(categoryId)
 	if result == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All Menu data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve Menu category data"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(result))
 }
@@ -45,7 +45,7 @@ func GetMenuByCategory(c echo.Context) error {
 func GetCategory(c echo.Context) error {
 	result := repository.GetCategoryData()
 	if result == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All Menu data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All category data"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(result))
 }
@@ -68,7 +68,7 @@ func CreateCategory(c echo.Context) error {
 
 	repository.CreateCategoryData(categoryCreate)
 
-	return c.JSON(http.StatusOK, response.SuccessResponse("Create Food successfully"))
+	return c.JSON(http.StatusOK, response.SuccessResponse("Create category successfully"))
 }
 
 func EditFood(c echo.Context) error {
@@ -119,7 +119,7 @@ func DeleteFood(c echo.Context) error {
 
 	result := repository.UpdateFoodData(updateFood, foodId)
 	if result != nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse(fmt.Sprintf("Failed to Delete  Food data")))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse(fmt.Sprintf("Failed to Delete Food data")))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse("Delete Food successfully"))

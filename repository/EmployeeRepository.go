@@ -47,3 +47,26 @@ func FireEmployeeData(employeeId string) error {
 	}
 	return nil
 }
+func AdsentEmployeeData(employeeId string) error {
+	db := database.DB
+	query := "update employee set status = 2 where employee_id = ?;"
+	result := db.Exec(query, employeeId)
+
+	if result.Error != nil {
+		log.Println("Failed to fire employee:", result.Error)
+		return result.Error
+	}
+	return nil
+}
+
+func WorkEmployeeData(employeeId string) interface{} {
+	db := database.DB
+	query := "update employee set status = 0 where employee_id = ?;"
+	result := db.Exec(query, employeeId)
+
+	if result.Error != nil {
+		log.Println("Failed to fire employee:", result.Error)
+		return result.Error
+	}
+	return nil
+}

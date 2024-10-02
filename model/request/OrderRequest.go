@@ -1,7 +1,7 @@
 package request
 
 type ReviewRequest struct {
-	Review string `json:"review" binding:"required"`
+	Review string `json:"review"`
 }
 type CreateOrderRequest struct {
 	Number    int                `json:"number"`

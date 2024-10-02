@@ -23,7 +23,7 @@ func CancelOrder(c echo.Context) error {
 	err = repository.UpdateStatusOrderData(orderId, 3, reviewRequest.Review)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusNotFound, response.ErrorResponse("Order not found"))
+			return c.JSON(http.StatusNotFound, response.ErrorResponse("Order not found Or updated"))
 		}
 		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to cancel order"))
 	}
@@ -44,7 +44,7 @@ func ChackBillOrder(c echo.Context) error {
 	err = repository.UpdateStatusOrderData(orderId, 4, reviewRequest.Review)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			return c.JSON(http.StatusNotFound, response.ErrorResponse("Order not found"))
+			return c.JSON(http.StatusNotFound, response.ErrorResponse("Order not found or updated"))
 		}
 		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to check bill order"))
 	}
@@ -70,7 +70,7 @@ func GetOrderById(c echo.Context) error {
 
 	orderResult := repository.GetOrderByIdData(orderId)
 	if orderResult == (response.OrderIdResponse{}) {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order id data"))
 	}
 	orderListResult := repository.GetOrderListOrderData(orderId)
 	if orderListResult == nil {
@@ -96,7 +96,7 @@ func GetOrderById(c echo.Context) error {
 func GetOrderWait(c echo.Context) error {
 	orderResult := repository.GetOrderStatustData(1)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order wait data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -105,7 +105,7 @@ func GetOrderWait(c echo.Context) error {
 func GetOrderEating(c echo.Context) error {
 	orderResult := repository.GetOrderStatustData(2)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order eating data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -113,7 +113,7 @@ func GetOrderEating(c echo.Context) error {
 func GetOrderPaid(c echo.Context) error {
 	orderResult := repository.GetOrderStatustData(4)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order paid data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -121,7 +121,7 @@ func GetOrderPaid(c echo.Context) error {
 func GetOrderCancel(c echo.Context) error {
 	orderResult := repository.GetOrderStatustData(3)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order cancel data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -134,7 +134,7 @@ func GetOrderDateHistory(c echo.Context) error {
 	}
 	orderResult := repository.GetOrderDateData(dateStr)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve order date history data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -147,7 +147,7 @@ func GetEmployeeIdOrder(c echo.Context) error {
 	}
 	orderResult := repository.GetOrderEmployeeData(employeeId)
 	if orderResult == nil {
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve All order data"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to retrieve employee order data"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse(orderResult))
@@ -164,7 +164,7 @@ func EatingOrder(c echo.Context) error {
 		if err == gorm.ErrRecordNotFound {
 			return c.JSON(http.StatusNotFound, response.ErrorResponse("Order not found"))
 		}
-		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to Eating order"))
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to Eating update to order"))
 	}
 
 	return c.JSON(http.StatusOK, response.SuccessResponse("Order Update status Eating successfully"))
@@ -196,6 +196,10 @@ func CreateOrder(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to create order list"))
 		}
+	}
+	err = repository.UpdateStatusCreateOrder(tableId, employeeId)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to update order status"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(map[string]interface{}{
 		"customer_id": customerId,
