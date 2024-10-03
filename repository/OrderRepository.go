@@ -2,7 +2,6 @@ package repository
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"log"
 	"restaurant/database"
 	"restaurant/model/response"
@@ -50,14 +49,8 @@ func UpdateStatusOrderData(orderId int, status int, review string) error {
 			return resultEP.Error
 		}
 
-		if resultEP.RowsAffected != 0 {
-			log.Println("No table found with the specified employee_id")
-			return errors.New("no table found with the specified employee_id")
-		}
 	}
-	if result.RowsAffected == 0 {
-		return gorm.ErrRecordNotFound
-	}
+
 	return nil
 }
 
@@ -259,22 +252,24 @@ func CreateOrderListItem(foodId, quantity, orderId int) error {
 	return nil
 }
 
-func UpdateStatusCreateOrder(tableId int, employeeId int) error {
+func UpdateStatusCreateOrder(tableId int, employeeId int, number int) error {
 	if tableId != 0 && employeeId != 0 {
-		updateTableQuery := "UPDATE Tables SET status = 1 WHERE table_id = ?"
+		if number != 0 {
+			updateTableQuery := "UPDATE Tables SET status = 1 WHERE table_id = ?"
 
-		result := database.DB.Exec(updateTableQuery, tableId)
+			result := database.DB.Exec(updateTableQuery, tableId)
 
-		if result.Error != nil {
-			log.Println("Failed to update table status:", result.Error)
-			return result.Error
+			if result.Error != nil {
+				log.Println("Failed to update table status:", result.Error)
+				return result.Error
+			}
+
+			if result.RowsAffected == 0 {
+				log.Println("No table found with the specified table_id")
+				return errors.New("no table found with the specified table_id")
+			}
 		}
-
-		if result.RowsAffected == 0 {
-			log.Println("No table found with the specified table_id")
-			return errors.New("no table found with the specified table_id")
-		}
-		updateEmployeeQuery := "UPDATE employee SET status = 2 WHERE employee_id = ?"
+		updateEmployeeQuery := "UPDATE employee SET status = 1 WHERE employee_id = ?"
 
 		resultEP := database.DB.Exec(updateEmployeeQuery, employeeId)
 
@@ -290,5 +285,23 @@ func UpdateStatusCreateOrder(tableId int, employeeId int) error {
 	} else {
 		log.Println("%d %d", tableId, employeeId)
 	}
+	return nil
+}
+
+func UpdateTotalAmountOrder() error {
+	query := `
+	UPDATE Orders o
+	JOIN (
+		SELECT ol.order_id, SUM(f.price * ol.quantity) AS total
+	FROM order_list ol
+	JOIN food f ON ol.food_id = f.food_id
+	GROUP BY ol.order_id
+	) ol ON o.order_id = ol.order_id
+	SET o.total_amount = ol.total;
+	`
+	if err := database.DB.Exec(query).Error; err != nil {
+		return err
+	}
+
 	return nil
 }

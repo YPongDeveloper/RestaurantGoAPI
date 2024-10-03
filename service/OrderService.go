@@ -197,9 +197,13 @@ func CreateOrder(c echo.Context) error {
 			return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to create order list"))
 		}
 	}
-	err = repository.UpdateStatusCreateOrder(tableId, employeeId)
+	err = repository.UpdateStatusCreateOrder(tableId, employeeId, createOrder.Number)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to update order status"))
+	}
+	err = repository.UpdateTotalAmountOrder()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response.ErrorResponse("Failed to update order total amount"))
 	}
 	return c.JSON(http.StatusOK, response.SuccessResponse(map[string]interface{}{
 		"customer_id": customerId,
