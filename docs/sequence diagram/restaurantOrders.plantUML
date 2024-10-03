@@ -1,0 +1,334 @@
+@startuml
+
+title Restaurant Order
+
+actor cilent as c #Red
+participant Rounter as r
+participant Service as sv 
+participant Repository as rp 
+entity restaurant as rt 
+
+c -> r : GET /orders
+activate r 
+    r -> sv : Calling Method GetOrders()
+    activate sv
+      sv -> rp : Calling Method GetOrderData()
+      activate rp
+        rp -> rt : QUERY select from Orders
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /order/:orderId
+activate r 
+    r -> sv : Calling Method GetOrderById()
+    activate sv
+      sv -> rp : Calling Method GetOrderByIdData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return response.OrderIdResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and OrderIdResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET order/wait
+activate r 
+    r -> sv : Calling Method GetOrderWait()
+    activate sv
+      sv -> rp : Calling Method GetOrderStatustData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET order/eating
+activate r 
+    r -> sv : Calling Method GetOrderEating()
+    activate sv
+      sv -> rp : Calling Method GetOrderStatustData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET order/paid
+activate r 
+    r -> sv : Calling Method GetOrderPaid()
+    activate sv
+      sv -> rp : Calling Method GetOrderStatustData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /order/cancel
+activate r 
+    r -> sv : Calling Method GetOrderCancel()
+    activate sv
+      sv -> rp : Calling Method GetOrderStatustData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /order/dateHistory/:date
+activate r 
+    r -> sv : Calling Method GetOrderDateHistory()
+    activate sv
+      sv -> rp : Calling Method GetOrderDateData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /order/employee/:employeeId
+activate r 
+    r -> sv : Calling Method GetEmployeeIdOrder()
+    activate sv
+      sv -> rp : Calling Method GetOrderEmployeeData()
+      activate rp
+        rp -> rt : QUERY select from Orders and order_list 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders and order_list restaurant
+        deactivate rt
+        rp -> sv : Return []response.OrderAllResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List OrderAllResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /order/cancel/:order_id
+activate r 
+    r -> sv : Calling Method CancelOrder()
+    activate sv
+      sv -> rp : Calling Method UpdateStatusOrderData()
+      activate rp
+        rp -> rt : QUERY update from Orders 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders restaurant
+        deactivate rt
+        rp -> sv : Return meassge
+    deactivate rp
+    sv -> r :Return meassge Data
+    deactivate sv
+    r -> c : response Status 200 and meassge Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /order/eating/:order_id
+activate r 
+    r -> sv : Calling Method EatingOrder()
+    activate sv
+      sv -> rp : Calling Method UpdateStatusOrderData()
+      activate rp
+        rp -> rt : QUERY update from Orders 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders restaurant
+        deactivate rt
+        rp -> sv : Return meassge
+    deactivate rp
+    sv -> r :Return meassge Data
+    deactivate sv
+    r -> c : response Status 200 and meassge Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /order/paid/:order_id
+activate r 
+    r -> sv : Calling Method ChackBillOrder()
+    activate sv
+      sv -> rp : Calling Method UpdateStatusOrderData()
+      activate rp
+        rp -> rt : QUERY update from Orders 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from Orders restaurant
+        deactivate rt
+        rp -> sv : Return meassge
+    deactivate rp
+    sv -> r :Return meassge Data
+    deactivate sv
+    r -> c : response Status 200 and meassge Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : POST /order/create
+activate r 
+    r -> sv : Calling Method CreateOrder()
+    activate sv
+      sv -> rp : Calling Method CreateCustomer()
+      activate rp
+        rp -> rt : QUERY insert from customer 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from customer restaurant
+        deactivate rt
+        rp -> sv : Return customer_id
+    deactivate rp
+    
+    else 
+        sv -> r :Return error message
+    deactivate sv
+        r -> c : response Status 500 and send error message
+    end 
+    
+        sv -> rp : Calling Method FindAvailableTable()
+        activate rp
+        rp -> rt : QUERY select from Tables
+        alt isValid case 
+        activate rt 
+            rt -> rp : Return Data from Tables restaurant
+        deactivate rt
+        rp -> sv : Return table_id
+        deactivate rp
+else 
+        sv -> r :Return Response Data
+    deactivate sv
+        r -> c : response Status 500 and send error message
+    end
+        sv -> rp :Calling Method FindEmployeeId()
+        activate rp 
+        rp -> rt : QUERY select from employee 
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from employee restaurant
+        deactivate rt
+        rp -> sv : Return employee_id
+        deactivate rp
+        else 
+        sv -> r :Return Response Data
+    deactivate sv
+        r -> c : response Status 500 and send error message
+    end
+        sv -> rp : Calling Method CreateOrder()
+        activate rp
+        rp -> rt : QUERY insert Orders
+        alt isValid case 
+        activate rt 
+            rt -> rp : Return message
+        deactivate rt
+        rp -> sv : Return message
+        deactivate rp
+    else 
+        sv -> r :Return Response Data
+    deactivate sv
+        r -> c : response Status 500 and send error message
+    end
+        sv -> rp : Calling Method CreateOrderListItem()
+        activate rp
+        rp -> rt : QUERY insert order_list
+        alt isValid case 
+        activate rt 
+            rt -> rp : Return message
+        deactivate rt
+        rp -> sv : Return message
+        deactivate rp
+    else 
+        sv -> r :Return Response Data
+    deactivate sv
+        r -> c : response Status 500 and send error message
+    end
+        sv -> rp : Calling Method UpdateStatusCreateOrder()
+        activate rp
+        rp -> rt : QUERY UPDATE Tables 
+        alt isValid case 
+        activate rt 
+            rt -> rp : Return message
+        deactivate rt
+        rp -> sv : Return message
+        deactivate rp
+        
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and meassge Data
+    else 
+        r -> c : response Status 500 and send error message
+    end
+deactivate r

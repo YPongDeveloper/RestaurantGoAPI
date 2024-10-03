@@ -1,0 +1,198 @@
+@startuml
+
+title Restaurant Food
+
+actor cilent as c #Red
+participant Rounter as r
+participant Service as sv 
+participant Repository as rp 
+entity restaurant as rt 
+
+c -> r : GET /menu
+activate r 
+    r -> sv : Calling Method GetMenu()
+    activate sv
+      sv -> rp : Calling Method GetMenuData()
+      activate rp
+        rp -> rt : QUERY select from food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from food restaurant
+        deactivate rt
+        rp -> sv : Return []dao.Food
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List Food Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+c -> r : GET /menu/:foodId
+activate r 
+    r -> sv : Calling Method GetMenuById()
+    activate sv
+      sv -> rp : Calling Method GetMenuIdData()
+      activate rp
+        rp -> rt : QUERY select from food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from food restaurant
+        deactivate rt
+        rp -> sv : Return response.FoodMenuIdResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and FoodMenuIdResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+deactivate r
+c -> r : GET /menu/categorys
+activate r 
+    r -> sv : Calling Method GetCategory()
+    activate sv
+      sv -> rp : Calling Method GetCategoryData()
+      activate rp
+        rp -> rt : QUERY select from category
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from category restaurant
+        deactivate rt
+        rp -> sv : Return []response.CategoryResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List CategoryResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /menu/category/:categoryId
+activate r 
+    r -> sv : Calling Method GetMenuByCategory()
+    activate sv
+      sv -> rp : Calling Method GetMenuCategoryData()
+      activate rp
+        rp -> rt : QUERY select from category and food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from category and food restaurant
+        deactivate rt
+        rp -> sv : Return []response.FoodMenuIdResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List FoodMenuIdResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : POST /food/create
+activate r 
+    r -> sv : Calling Method CreateFood()
+    activate sv
+      sv -> rp : Calling Method CreateFoodData()
+      activate rp
+        rp -> rt : QUERY insert from  food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : POST /food/create/category
+activate r 
+    r -> sv : Calling Method CreateCategory()
+    activate sv
+      sv -> rp : Calling Method CreateCategoryData()
+      activate rp
+        rp -> rt : QUERY insert from category
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /food/edit/:foodId
+activate r 
+    r -> sv : Calling Method EditFood()
+    activate sv
+      sv -> rp : Calling Method UpdateFoodData()
+      activate rp
+        rp -> rt : QUERY update from food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /food/available/:status/:foodId
+activate r 
+    r -> sv : Calling Method AvailableFood()
+    activate sv
+      sv -> rp : Calling Method UpdateFoodData()
+      activate rp
+        rp -> rt : QUERY update from food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : DELETE /food/delete/:foodId
+activate r 
+    r -> sv : Calling Method DeleteFood()
+    activate sv
+      sv -> rp : Calling Method UpdateFoodData()
+      activate rp
+        rp -> rt : QUERY update from food
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r

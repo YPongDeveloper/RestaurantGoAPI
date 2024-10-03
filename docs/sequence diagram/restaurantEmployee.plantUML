@@ -1,0 +1,155 @@
+@startuml
+
+title Restaurant Employee
+
+actor cilent as c #Red
+participant Rounter as r
+participant Service as sv 
+participant Repository as rp 
+entity restaurant as rt 
+
+c -> r : GET /employees
+activate r 
+    r -> sv : Calling Method GetEmployees()
+    activate sv
+      sv -> rp : Calling Method GetEmployees()
+      activate rp
+        rp -> rt : QUERY select from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from employee restaurant
+        deactivate rt
+        rp -> sv : Return []dao.Employee 
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List Employee Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /employee/:employeeId
+activate r 
+    r -> sv : Calling Method GetEmployeeById()
+    activate sv
+      sv -> rp : Calling Method GetEmployeeByIdData()
+      activate rp
+        rp -> rt : QUERY select from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from employee restaurant
+        deactivate rt
+        rp -> sv : Return dao.Employee
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and Employee Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : POST /employee/hire
+activate r 
+    r -> sv : Calling Method CreateEmployee()
+    activate sv
+      sv -> rp : Calling Method CreateEmployeeData()
+      activate rp
+        rp -> rt : QUERY insert from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /employee/edit/:employeeId
+activate r 
+    r -> sv : Calling Method UpdateEmployee()
+    activate sv
+      sv -> rp : Calling Method UpdateEmployeeData()
+      activate rp
+        rp -> rt : QUERY update from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /employee/fire/:employeeId
+activate r 
+    r -> sv : Calling Method FireEmployee()
+    activate sv
+      sv -> rp : Calling Method FireEmployeeData()
+      activate rp
+        rp -> rt : QUERY update from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : PUT /employee/absent/:employeeId
+activate r 
+    r -> sv : Calling Method AbsentEmployee()
+    activate sv
+      sv -> rp : Calling Method AdsentEmployeeData()
+      activate rp
+        rp -> rt : QUERY update from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+c -> r : PUT /employee/work/:employeeId
+activate r 
+    r -> sv : Calling Method WorkEmployee()
+    activate sv
+      sv -> rp : Calling Method WorkEmployeeData()
+      activate rp
+        rp -> rt : QUERY update from employee
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Response Result
+        deactivate rt
+        rp -> sv : Return message
+    deactivate rp
+    sv -> r :Return message Data
+    deactivate sv
+    r -> c : response Status 200 and message Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r

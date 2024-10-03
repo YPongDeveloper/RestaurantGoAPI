@@ -1,0 +1,51 @@
+@startuml
+
+title Restaurant Customer
+
+actor cilent as c #Red
+participant Rounter as r
+participant Service as sv 
+participant Repository as rp 
+entity restaurant as rt 
+
+c -> r : GET /customers
+activate r 
+    r -> sv : Calling Method GetCustomers()
+    activate sv
+      sv -> rp : Calling Method GetCustomersData()
+      activate rp
+        rp -> rt : QUERY select from customer
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from customer restaurant
+        deactivate rt
+        rp -> sv : Return []dao.Customer
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List Customer Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r
+
+c -> r : GET /customer/:customerId
+activate r 
+    r -> sv : Calling Method GetCustomerById()
+    activate sv
+      sv -> rp : Calling Method GetCustomerByIdData()
+      activate rp
+        rp -> rt : QUERY select from customer
+        alt isValid case 
+        activate rt
+            rt -> rp : Return Data from customer Orders restaurant
+        deactivate rt
+        rp -> sv : Return []response.CustomerIdResponse
+    deactivate rp
+    sv -> r :Return Response Data
+    deactivate sv
+    r -> c : response Status 200 and List CustomerIdResponse Data
+    else 
+        r -> c : response Status 500 and send error message
+    end 
+deactivate r

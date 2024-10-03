@@ -3,9 +3,9 @@ package service
 import (
 	"github.com/labstack/echo/v4"
 	"net/http"
-	"restaurant/model/dao"
-	"restaurant/model/response"
-	"restaurant/repository"
+	"restaurant/internal/model/dao"
+	"restaurant/internal/model/response"
+	"restaurant/internal/repository"
 )
 
 func GetEmployees(c echo.Context) error {

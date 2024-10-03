@@ -4,7 +4,7 @@ import (
 	"errors"
 	"log"
 	"restaurant/database"
-	"restaurant/model/response"
+	response2 "restaurant/internal/model/response"
 )
 
 func UpdateStatusOrderData(orderId int, status int, review string) error {
@@ -54,8 +54,8 @@ func UpdateStatusOrderData(orderId int, status int, review string) error {
 	return nil
 }
 
-func GetOrderByIdData(orderId int) response.OrderIdResponse {
-	var orderIds response.OrderIdResponse
+func GetOrderByIdData(orderId int) response2.OrderIdResponse {
+	var orderIds response2.OrderIdResponse
 	db := database.DB
 
 	result := db.Raw("SELECT o.customer_id, o.order_id,o.employee_id, o.table_id, o.total_amount, o.order_date, o.status, o.review "+
@@ -64,15 +64,15 @@ func GetOrderByIdData(orderId int) response.OrderIdResponse {
 
 	if result.Error != nil {
 		log.Println("Error retrieving customer orders:", result.Error)
-		return response.OrderIdResponse{}
+		return response2.OrderIdResponse{}
 	}
 
 	return orderIds
 
 }
 
-func GetOrderListOrderData(orderId int) []response.OrderListResponse {
-	var orderList []response.OrderListResponse
+func GetOrderListOrderData(orderId int) []response2.OrderListResponse {
+	var orderList []response2.OrderListResponse
 	db := database.DB
 
 	result := db.Raw("SELECT f.food_name,ol.order_id, cg.category_name, ol.quantity, f.price * ol.quantity AS total_price "+
@@ -89,8 +89,8 @@ func GetOrderListOrderData(orderId int) []response.OrderListResponse {
 	return orderList
 }
 
-func GetOrderData() []response.OrderAllResponse {
-	var order []response.OrderAllResponse
+func GetOrderData() []response2.OrderAllResponse {
+	var order []response2.OrderAllResponse
 	db := database.DB
 
 	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu " +
@@ -105,8 +105,8 @@ func GetOrderData() []response.OrderAllResponse {
 	return order
 }
 
-func GetOrderStatustData(status int) []response.OrderAllResponse {
-	var order []response.OrderAllResponse
+func GetOrderStatustData(status int) []response2.OrderAllResponse {
+	var order []response2.OrderAllResponse
 	db := database.DB
 
 	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+
@@ -121,8 +121,8 @@ func GetOrderStatustData(status int) []response.OrderAllResponse {
 	return order
 }
 
-func GetOrderDateData(dateStr string) []response.OrderAllResponse {
-	var order []response.OrderAllResponse
+func GetOrderDateData(dateStr string) []response2.OrderAllResponse {
+	var order []response2.OrderAllResponse
 	db := database.DB
 
 	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+
@@ -137,8 +137,8 @@ func GetOrderDateData(dateStr string) []response.OrderAllResponse {
 	return order
 }
 
-func GetOrderEmployeeData(employeeId string) []response.OrderAllResponse {
-	var order []response.OrderAllResponse
+func GetOrderEmployeeData(employeeId string) []response2.OrderAllResponse {
+	var order []response2.OrderAllResponse
 	db := database.DB
 
 	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+

@@ -3,7 +3,7 @@ package repository
 import (
 	"log"
 	"restaurant/database"
-	"restaurant/model/dao"
+	"restaurant/internal/model/dao"
 )
 
 func GetEmployees() []dao.Employee {

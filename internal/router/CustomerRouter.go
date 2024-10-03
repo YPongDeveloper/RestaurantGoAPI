@@ -3,7 +3,7 @@ package router
 
 import (
 	"github.com/labstack/echo/v4"
-	"restaurant/service"
+	"restaurant/internal/service"
 )
 
 func CustomerRouter(e *echo.Echo) {

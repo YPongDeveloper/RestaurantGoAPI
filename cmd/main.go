@@ -3,7 +3,7 @@ package main
 
 import (
 	"github.com/labstack/echo/v4"
-	"restaurant/router"
+	router "restaurant/internal/router"
 )
 
 func main() {

@@ -4,8 +4,8 @@ import (
 	"errors"
 	"log"
 	"restaurant/database"
-	"restaurant/model/dao"
-	"restaurant/model/response"
+	"restaurant/internal/model/dao"
+	"restaurant/internal/model/response"
 )
 
 func GetMenuData() []dao.Food {

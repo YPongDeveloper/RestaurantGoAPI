@@ -2,7 +2,7 @@ package router
 
 import (
 	"github.com/labstack/echo/v4"
-	"restaurant/service"
+	"restaurant/internal/service"
 )
 
 func OrderRouter(e *echo.Echo) {
