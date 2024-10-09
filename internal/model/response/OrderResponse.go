@@ -26,6 +26,7 @@ type OrderResponse struct {
 type OrderAllResponse struct {
 	OrderId     int       `json:"order_id"`
 	CustomerId  int       `json:"customer_id"`
+	Number      int       `json:"number"`
 	EmployeeId  int       `json:"employee_id"`
 	TableId     int       `json:"table_id"`
 	TotalMenu   int       `json:"total_menu"`

@@ -6,7 +6,7 @@ import (
 )
 
 func OrderRouter(e *echo.Echo) {
-	e.GET("orders", service.GetOrders)
+	e.GET("order", service.GetOrders)
 	e.GET("order/:orderId", service.GetOrderById)
 	e.GET("order/wait", service.GetOrderWait)
 	e.GET("order/eating", service.GetOrderEating)

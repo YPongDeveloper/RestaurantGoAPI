@@ -93,8 +93,8 @@ func GetOrderData() []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu " +
-		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id  group by o.order_id;").
+	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu " +
+		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id group by o.order_id;").
 		Scan(&order)
 
 	if result.Error != nil {
@@ -109,8 +109,8 @@ func GetOrderStatustData(status int) []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+
-		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id where status = ? group by o.order_id;", status).
+	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu "+
+		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id where status = ? group by o.order_id;", status).
 		Scan(&order)
 
 	if result.Error != nil {
@@ -125,8 +125,8 @@ func GetOrderDateData(dateStr string) []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+
-		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id where DATE(order_date) = ? group by o.order_id;", dateStr).
+	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu "+
+		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id where DATE(order_date) = ? group by o.order_id;", dateStr).
 		Scan(&order)
 
 	if result.Error != nil {
@@ -141,8 +141,8 @@ func GetOrderEmployeeData(employeeId string) []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,customer_id,employee_id,review,count(o.order_id) as total_menu "+
-		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id where employee_id = ? group by o.order_id;", employeeId).
+	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu "+
+		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id where employee_id = ? group by o.order_id;", employeeId).
 		Scan(&order)
 
 	if result.Error != nil {
