@@ -79,6 +79,8 @@ func GetOrderById(c echo.Context) error {
 
 	var orderResponse response2.OrderResponse
 	orderResponse.CustomerId = orderResult.CustomerId
+	orderResponse.EmployeeId = orderResult.EmployeeId
+	orderResponse.TableId = orderResult.TableId
 	orderResponse.OrderId = orderResult.OrderId
 	orderResponse.TotalAmount = orderResult.TotalAmount
 	orderResponse.OrderDate = orderResult.OrderDate
