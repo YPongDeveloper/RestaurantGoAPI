@@ -3,7 +3,7 @@ package dao
 type Food struct {
 	FoodId      int    `json:"food_id"`
 	FoodName    string `json:"food_name"`
-	Image       string `json:"image"`
+	ImageBase64 string `json:"image_base64"`
 	Description string `json:"description"`
 	Price       int    `json:"price"`
 	Available   *int   `json:"available"`
