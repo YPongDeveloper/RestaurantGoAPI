@@ -13,6 +13,7 @@ func FoodRouter(e *echo.Echo) {
 	e.POST("food/create", service.CreateFood)
 	e.POST("food/create/category", service.CreateCategory)
 	e.PUT("food/edit/:foodId", service.EditFood)
+	e.PUT("food/category/edit/:categoryId", service.CategoryEdit)
 	e.PUT("food/available/:status/:foodId", service.AvailableFood)
 	e.DELETE("food/delete/:foodId", service.DeleteFood)
 }

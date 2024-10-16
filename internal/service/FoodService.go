@@ -124,3 +124,19 @@ func DeleteFood(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, response2.SuccessResponse("Delete Food successfully"))
 }
+
+func CategoryEdit(c echo.Context) error {
+	categoryId, err := strconv.Atoi(c.Param("categoryId"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response2.ErrorResponse("Invalid Food Id"))
+	}
+	var editCategory dao.Category
+	if err := c.Bind(&editCategory); err != nil {
+		return c.JSON(http.StatusBadRequest, response2.ErrorResponse("Invalid request body"))
+	}
+	result := repository.UpdateCategoryData(editCategory, categoryId)
+	if result != nil {
+		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to update Category data"))
+	}
+	return c.JSON(http.StatusOK, response2.SuccessResponse("Update Category successfully"))
+}

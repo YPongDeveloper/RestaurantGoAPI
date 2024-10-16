@@ -11,8 +11,9 @@ type Food struct {
 	CategoryId  int    `json:"category_id"`
 }
 type Category struct {
-	CategoryName string `json:"category_name"`
-	CategoryId   int    `json:"category_id"`
+	CategoryName  string `json:"category_name"`
+	CategoryId    int    `json:"category_id"`
+	ImageCategory string `json:"image_category"`
 }
 
 func (Food) TableName() string {
