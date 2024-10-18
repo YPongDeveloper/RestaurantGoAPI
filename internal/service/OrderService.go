@@ -84,6 +84,7 @@ func GetOrderById(c echo.Context) error {
 	orderResponse.OrderId = orderResult.OrderId
 	orderResponse.TotalAmount = orderResult.TotalAmount
 	orderResponse.OrderDate = orderResult.OrderDate
+	orderResponse.UpdateTime = orderResult.UpdateTime
 	orderResponse.Status = orderResult.Status
 	orderResponse.Review = orderResult.Review
 	for _, orderList := range orderListResult {
@@ -213,4 +214,33 @@ func CreateOrder(c echo.Context) error {
 		"employee_id": employeeId,
 		"order_id":    orderId,
 	}))
+}
+
+func UpdateOrder(c echo.Context) error {
+	var orderList []request.OrderListRequest
+
+	if err := c.Bind(&orderList); err != nil {
+		return c.JSON(http.StatusBadRequest, response2.ErrorResponse("Invalid request body"))
+	}
+
+	orderId, err := strconv.Atoi(c.Param("orderId"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, response2.ErrorResponse("Invalid order ID"))
+	}
+
+	if err := repository.DeleteOrderListOldItem(orderId); err != nil {
+		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to delete old order list"))
+	}
+
+	for _, item := range orderList {
+		err = repository.CreateOrderListItem(item.FoodId, item.Quantity, orderId)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to create new order list"))
+		}
+	}
+
+	if err := repository.UpdateOrderUpdateTime(orderId); err != nil {
+		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to update order time"))
+	}
+	return c.JSON(http.StatusOK, response2.SuccessResponse("Order updated successfully"))
 }

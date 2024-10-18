@@ -27,6 +27,7 @@ type CustomerIdResponse struct {
 }
 type OrderListResponse struct {
 	OrderId      int    `json:"order_id"`
+	FoodId       int    `json:"food_id"`
 	FoodName     string `json:"food_name"`
 	CategoryName string `json:"category_name"`
 	Quantity     int    `json:"quantity"`

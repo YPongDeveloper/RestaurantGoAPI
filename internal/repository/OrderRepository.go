@@ -58,7 +58,7 @@ func GetOrderByIdData(orderId int) response2.OrderIdResponse {
 	var orderIds response2.OrderIdResponse
 	db := database.DB
 
-	result := db.Raw("SELECT o.customer_id, o.order_id,o.employee_id, o.table_id, o.total_amount, o.order_date, o.status, o.review "+
+	result := db.Raw("SELECT o.customer_id, o.order_id,o.employee_id, o.table_id, o.total_amount, o.order_date,o.update_time, o.status, o.review "+
 		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id where o.order_id = ? group by o.order_id;", orderId).
 		Scan(&orderIds)
 
@@ -75,7 +75,7 @@ func GetOrderListOrderData(orderId int) []response2.OrderListResponse {
 	var orderList []response2.OrderListResponse
 	db := database.DB
 
-	result := db.Raw("SELECT f.food_name,ol.order_id, cg.category_name, ol.quantity, f.price * ol.quantity AS total_price "+
+	result := db.Raw("SELECT f.food_name,f.food_id,ol.order_id, cg.category_name, ol.quantity, f.price * ol.quantity AS total_price "+
 		"FROM customer c "+
 		"INNER JOIN Orders o ON c.customer_id = o.customer_id "+
 		"INNER JOIN order_list ol ON o.order_id = ol.order_id "+
@@ -93,7 +93,7 @@ func GetOrderData() []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu " +
+	result := db.Raw("select o.order_id,table_id,order_date,o.update_time,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu " +
 		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id group by o.order_id;").
 		Scan(&order)
 
@@ -303,5 +303,25 @@ func UpdateTotalAmountOrder() error {
 		return err
 	}
 
+	return nil
+}
+
+func DeleteOrderListOldItem(orderId int) error {
+	// ใช้ Exec เพื่อรันคำสั่ง SQL แบบ raw
+	query := "DELETE FROM order_list WHERE order_id = ?"
+	if err := database.DB.Exec(query, orderId).Error; err != nil {
+		return err
+	}
+	return nil
+}
+
+func UpdateOrderUpdateTime(orderId int) error {
+	// ใช้คำสั่ง SQL ดิบในการอัปเดต update_time
+	sql := "UPDATE Orders SET update_time = NOW() WHERE order_id = ?"
+
+	// รันคำสั่ง SQL ดิบ โดยส่งค่า orderId เป็น parameter
+	if err := database.DB.Exec(sql, orderId).Error; err != nil {
+		return err
+	}
 	return nil
 }

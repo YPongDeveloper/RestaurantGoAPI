@@ -18,4 +18,5 @@ func OrderRouter(e *echo.Echo) {
 	e.PUT("order/eating/:order_id", service.EatingOrder)
 	e.PUT("order/paid/:order_id", service.ChackBillOrder)
 	e.POST("order/create", service.CreateOrder)
+	e.PUT("order/update/:orderId", service.UpdateOrder)
 }

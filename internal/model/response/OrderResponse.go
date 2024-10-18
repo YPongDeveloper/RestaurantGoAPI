@@ -9,6 +9,7 @@ type OrderIdResponse struct {
 	TableId     int       `json:"table_id"`
 	TotalAmount int       `json:"total_amount"`
 	OrderDate   time.Time `json:"order_date"`
+	UpdateTime  time.Time `json:"update_time"`
 	Status      int       `json:"status"`
 	Review      string    `json:"review"`
 }
@@ -19,6 +20,7 @@ type OrderResponse struct {
 	TableId     int                 `json:"table_id"`
 	TotalAmount int                 `json:"total_amount"`
 	OrderDate   time.Time           `json:"order_date"`
+	UpdateTime  time.Time           `json:"update_time"`
 	Status      int                 `json:"status"`
 	Review      string              `json:"review"`
 	OrderList   []OrderListResponse `json:"order_list"` // รายการอาหาร
@@ -32,6 +34,7 @@ type OrderAllResponse struct {
 	TotalMenu   int       `json:"total_menu"`
 	TotalAmount int       `json:"total_amount"`
 	OrderDate   time.Time `json:"order_date"`
+	UpdateTime  time.Time `json:"update_time"`
 	Status      int       `json:"status"`
 	Review      string    `json:"review"`
 }
