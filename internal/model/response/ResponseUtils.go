@@ -13,6 +13,13 @@ func SuccessResponse(data interface{}) ResponseUtils {
 		Data:        data,
 	}
 }
+func SuccessInQueue(data interface{}) ResponseUtils {
+	return ResponseUtils{
+		Code:        201,
+		Description: "Success In Queue",
+		Data:        data,
+	}
+}
 func SuccessNoResponse() ResponseUtils {
 	return ResponseUtils{
 		Code:        200,

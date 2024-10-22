@@ -27,7 +27,10 @@ func CancelOrder(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to cancel order"))
 	}
-
+	err = repository.CheckQueue()
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to CheckQueue "))
+	}
 	return c.JSON(http.StatusOK, response2.SuccessResponse("Order canceled successfully"))
 }
 
@@ -48,7 +51,13 @@ func ChackBillOrder(c echo.Context) error {
 		}
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to check bill order"))
 	}
-
+	err = repository.CheckQueue()
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return c.JSON(http.StatusNotFound, response2.ErrorResponse("Order not found or updated"))
+		}
+		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to check bill order"))
+	}
 	return c.JSON(http.StatusOK, response2.SuccessResponse("Order checked bill successfully"))
 }
 
@@ -186,6 +195,9 @@ func CreateOrder(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to find available table"))
 	}
+	if tableId == 0 {
+		tableId = 16
+	}
 	employeeId, err := repository.FindEmployeeId()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to find employee"))
@@ -207,6 +219,18 @@ func CreateOrder(c echo.Context) error {
 	err = repository.UpdateTotalAmountOrder()
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to update order total amount"))
+	}
+	if tableId == 16 {
+		queueId, err := repository.CreateQueue(orderId)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to create Queue"))
+		}
+		return c.JSON(http.StatusInternalServerError, response2.SuccessInQueue(map[string]interface{}{
+			"customer_id": customerId,
+			"queue_id":    queueId,
+			"employee_id": employeeId,
+			"order_id":    orderId,
+		}))
 	}
 	return c.JSON(http.StatusOK, response2.SuccessResponse(map[string]interface{}{
 		"customer_id": customerId,

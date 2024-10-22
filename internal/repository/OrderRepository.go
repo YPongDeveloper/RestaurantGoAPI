@@ -4,8 +4,24 @@ import (
 	"errors"
 	"log"
 	"restaurant/database"
+	"restaurant/internal/model/dao"
 	response2 "restaurant/internal/model/response"
 )
+
+var queryFinTable = `
+    WITH AvailableTables AS (
+        SELECT table_id, chair_number
+        FROM Tables
+        WHERE chair_number >= ? AND status = 0
+    ),
+    MinChairTable AS (
+        SELECT table_id
+        FROM AvailableTables
+        WHERE chair_number = (SELECT MIN(chair_number) FROM AvailableTables)
+    )
+    SELECT MIN(table_id)
+    FROM MinChairTable;
+    `
 
 func UpdateStatusOrderData(orderId int, status int, review string) error {
 	db := database.DB
@@ -173,29 +189,20 @@ func CreateCustomer(number int) (int, error) {
 }
 
 func FindAvailableTable(chairNumber int) (int, error) {
-	var tableId int
-	query := `
-    WITH AvailableTables AS (
-        SELECT table_id, chair_number
-        FROM Tables
-        WHERE chair_number >= ? AND status = 0
-    ),
-    MinChairTable AS (
-        SELECT table_id
-        FROM AvailableTables
-        WHERE chair_number = (SELECT MIN(chair_number) FROM AvailableTables)
-    )
-    SELECT MIN(table_id)
-    FROM MinChairTable;
-    `
+	var tableId *int
 
-	result := database.DB.Raw(query, chairNumber).Scan(&tableId)
+	result := database.DB.Raw(queryFinTable, chairNumber).Scan(&tableId)
 	if result.Error != nil {
 		log.Println("Failed to find available table:", result.Error)
 		return 0, result.Error
 	}
 
-	return tableId, nil
+	if tableId == nil {
+		log.Println("No available table found")
+		return 0, nil
+	}
+
+	return *tableId, nil
 }
 
 func FindEmployeeId() (int, error) {
@@ -219,9 +226,14 @@ func FindEmployeeId() (int, error) {
 func CreateOrder(tableId, customerId, employeeId int) (int, error) {
 	query := `
     INSERT INTO Orders (table_id, order_date, total_amount, status, customer_id, employee_id, review) 
-    VALUES (?, NOW(), 0, 0, ?, ?, "")
+    VALUES (?, NOW(), 0, 
     `
-
+	if tableId == 16 {
+		query += "5"
+	} else {
+		query += "0"
+	}
+	query += " , ?, ?, \"\")"
 	result := database.DB.Exec(query, tableId, customerId, employeeId)
 	if result.Error != nil {
 		log.Println("Failed to create order:", result.Error)
@@ -254,7 +266,7 @@ func CreateOrderListItem(foodId, quantity, orderId int) error {
 
 func UpdateStatusCreateOrder(tableId int, employeeId int, number int) error {
 	if tableId != 0 && employeeId != 0 {
-		if number != 0 {
+		if number != 0 && tableId != 16 {
 			updateTableQuery := "UPDATE Tables SET status = 1 WHERE table_id = ?"
 
 			result := database.DB.Exec(updateTableQuery, tableId)
@@ -268,19 +280,19 @@ func UpdateStatusCreateOrder(tableId int, employeeId int, number int) error {
 				log.Println("No table found with the specified table_id")
 				return errors.New("no table found with the specified table_id")
 			}
-		}
-		updateEmployeeQuery := "UPDATE employee SET status = 1 WHERE employee_id = ?"
+			updateEmployeeQuery := "UPDATE employee SET status = 1 WHERE employee_id = ?"
 
-		resultEP := database.DB.Exec(updateEmployeeQuery, employeeId)
+			resultEP := database.DB.Exec(updateEmployeeQuery, employeeId)
 
-		if resultEP.Error != nil {
-			log.Println("Failed to update table status:", resultEP.Error)
-			return resultEP.Error
-		}
+			if resultEP.Error != nil {
+				log.Println("Failed to update table status:", resultEP.Error)
+				return resultEP.Error
+			}
 
-		if resultEP.RowsAffected == 0 {
-			log.Println("No table found with the specified table_id")
-			return errors.New("no table found with the specified table_id")
+			if resultEP.RowsAffected == 0 {
+				log.Println("No table found with the specified table_id")
+				return errors.New("no table found with the specified table_id")
+			}
 		}
 	} else {
 		log.Println("%d %d", tableId, employeeId)
@@ -322,6 +334,84 @@ func UpdateOrderUpdateTime(orderId int) error {
 	// รันคำสั่ง SQL ดิบ โดยส่งค่า orderId เป็น parameter
 	if err := database.DB.Exec(sql, orderId).Error; err != nil {
 		return err
+	}
+	return nil
+}
+
+func CreateQueue(orderId int) (interface{}, error) {
+	query := `
+   	insert into queue (status, order_id) VALUE (0,?)
+    `
+
+	result := database.DB.Exec(query, orderId)
+	if result.Error != nil {
+		log.Println("Failed to create queue:", result.Error)
+		return 0, result.Error
+	}
+
+	var queue int
+	result = database.DB.Raw("SELECT LAST_INSERT_ID()").Scan(&queue)
+	if result.Error != nil {
+		log.Println("Failed to retrieve queue ID:", result.Error)
+		return 0, result.Error
+	}
+
+	return queue, nil
+}
+
+func CheckQueue() error {
+	var queueInfo []dao.QueueInfo
+
+	// Query ข้อมูลโดยใช้ INNER JOIN ระหว่าง queue, Orders และ customer
+	result := database.DB.
+		Raw(`
+			 SELECT c.number, q.queue_id, q.order_id 
+             FROM queue q 
+             INNER JOIN Orders o ON q.order_id = o.order_id 
+             INNER JOIN customer c ON o.customer_id = c.customer_id
+             where q.status = 0
+             `).Scan(&queueInfo)
+
+	if result.Error != nil {
+		return result.Error
+	}
+
+	for _, queue := range queueInfo {
+		// รัน query โดยใช้ค่า queue.Number เป็นพารามิเตอร์
+		tableId, err := FindAvailableTable(queue.Number)
+		if err != nil {
+			return err
+		}
+		employeeId, err := FindEmployeeId()
+		if err != nil {
+			return err
+		}
+		if employeeId == 0 {
+			break
+		}
+		if tableId != 0 {
+			updateOrderQuery := `UPDATE Orders SET table_id = ?, status = 1 WHERE order_id = ?`
+			updateOrderResult := database.DB.Exec(updateOrderQuery, tableId, queue.OrderID)
+			if updateOrderResult.Error != nil {
+				return updateOrderResult.Error
+			}
+
+			updateTableQuery := `UPDATE Tables SET status = 1 WHERE table_id = ?`
+			updateTableResult := database.DB.Exec(updateTableQuery, tableId)
+			if updateTableResult.Error != nil {
+				return updateTableResult.Error
+			}
+			updateQueueQuery := `UPDATE queue SET status = 1 WHERE queue_id = ?`
+			updateQueueResult := database.DB.Exec(updateQueueQuery, queue.QueueID)
+			if updateQueueResult.Error != nil {
+				return updateQueueResult.Error
+			}
+			updateEmployeeQuery := `UPDATE employee SET status = 1 WHERE employee_id = ?`
+			updateEmployeeResult := database.DB.Exec(updateEmployeeQuery, employeeId)
+			if updateEmployeeResult.Error != nil {
+				return updateEmployeeResult.Error
+			}
+		}
 	}
 	return nil
 }
