@@ -109,8 +109,8 @@ func GetOrderData() []response2.OrderAllResponse {
 	var order []response2.OrderAllResponse
 	db := database.DB
 
-	result := db.Raw("select o.order_id,table_id,order_date,o.update_time,total_amount,status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu " +
-		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id group by o.order_id;").
+	result := db.Raw("select o.order_id,q.queue_id,table_id,order_date,o.update_time,total_amount,o.status,c.customer_id,c.number,employee_id,review,count(o.order_id) as total_menu " +
+		"FROM Orders o inner join order_list ol on o.order_id = ol.order_id inner join customer c on c.customer_id = o.customer_id left join queue q on o.order_id = q.order_id group by  q.queue_id,o.order_id ").
 		Scan(&order)
 
 	if result.Error != nil {

@@ -225,7 +225,7 @@ func CreateOrder(c echo.Context) error {
 		if err != nil {
 			return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to create Queue"))
 		}
-		return c.JSON(http.StatusInternalServerError, response2.SuccessInQueue(map[string]interface{}{
+		return c.JSON(http.StatusCreated, response2.SuccessInQueue(map[string]interface{}{
 			"customer_id": customerId,
 			"queue_id":    queueId,
 			"employee_id": employeeId,
