@@ -8,6 +8,7 @@ import (
 func EmployeeRouter(e *echo.Echo) {
 	e.GET("employee", service.GetEmployees)
 	e.GET("employee/:employeeId", service.GetEmployeeById)
+	e.POST("employee/login", service.Login)
 	e.POST("employee/hire", service.CreateEmployee)
 	e.PUT("employee/edit/:employeeId", service.UpdateEmployee)
 	e.PUT("employee/fire/:employeeId", service.FireEmployee)

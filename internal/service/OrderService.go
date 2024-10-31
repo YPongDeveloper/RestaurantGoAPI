@@ -31,6 +31,7 @@ func CancelOrder(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, response2.ErrorResponse("Failed to CheckQueue "))
 	}
+
 	return c.JSON(http.StatusOK, response2.SuccessResponse("Order canceled successfully"))
 }
 

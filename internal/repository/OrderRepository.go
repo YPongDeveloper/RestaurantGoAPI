@@ -2,6 +2,7 @@ package repository
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"restaurant/database"
 	"restaurant/internal/model/dao"
@@ -230,8 +231,10 @@ func CreateOrder(tableId, customerId, employeeId int) (int, error) {
     `
 	if tableId == 16 {
 		query += "5"
-	} else {
+	} else if tableId == 13 {
 		query += "0"
+	} else {
+		query += "1"
 	}
 	query += " , ?, ?, \"\")"
 	result := database.DB.Exec(query, tableId, customerId, employeeId)
@@ -411,6 +414,8 @@ func CheckQueue() error {
 			if updateEmployeeResult.Error != nil {
 				return updateEmployeeResult.Error
 			}
+			fmt.Printf("Queue id %d received table id %d\n", queue.QueueID, queue.Number)
+
 		}
 	}
 	return nil

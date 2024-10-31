@@ -4,6 +4,7 @@ import (
 	"log"
 	"restaurant/database"
 	"restaurant/internal/model/dao"
+	"restaurant/internal/model/request"
 )
 
 func GetEmployees() []dao.Employee {
@@ -69,4 +70,14 @@ func WorkEmployeeData(employeeId string) interface{} {
 		return result.Error
 	}
 	return nil
+}
+
+func LoginEmployee(req *request.LoginRequest) (*dao.Employee, error) {
+	var employee dao.Employee
+	db := database.DB
+	result := db.Where("username = ?", req.Username).First(&employee)
+	if result.Error != nil {
+		return nil, result.Error
+	}
+	return &employee, nil
 }
